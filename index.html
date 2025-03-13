@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wearable Health Monitoring System</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e2f, #3a3a52);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            background: linear-gradient(90deg, #ff8a00, #e52e71);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 15px rgba(255, 138, 0, 0.5);
+        }
+
+        .dashboard {
+            display: none;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            margin: 15px;
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="login-section">
+        <h2>Login</h2>
+        <input type="number" id="phone" placeholder="Enter your phone number">
+        <input type="password" id="password" placeholder="Enter your password">
+        <button onclick="sendLoginRequest()">Login</button>
+        <p id="message"></p>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <h2>Wearable Health Monitoring System</h2>
+        <div class="cards-container">
+            <div class="card">
+                <h3>HEART MONITOR</h3>
+                <p id="heart-rate">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>WEATHER</h3>
+                <p id="weather">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>SLEEP TRACKER</h3>
+                <p id="sleep-tracker">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendLoginRequest() {
+            let phone = document.getElementById("phone").value;
+            let password = document.getElementById("password").value;
+            if(phone === "" || password === "") {
+                document.getElementById("message").innerText = "Please enter phone number and password.";
+                return;
+            }
+            if(password === "1234") {
+                document.getElementById("login-section").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+                fetchData();
+                setInterval(fetchData, 5000); // Update data every 5 seconds
+            } else {
+                document.getElementById("message").innerText = "Incorrect password. Try again.";
+            }
+        }
+
+        function fetchData() {
+            fetch("http://your-esp32-ip/data")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("heart-rate").innerText = data.heart_rate + " bpm";
+                    document.getElementById("weather").innerText = data.temperature + "°C, " + data.humidity + "% Humidity";
+                    document.getElementById("sleep-tracker").innerText = data.sleep_hours + " hours";
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+    </script>
+</body>
+</html>
